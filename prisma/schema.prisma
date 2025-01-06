@@ -17,11 +17,40 @@ model User {
   username    String @unique
   displayName String @map("display_name")
 
+  tokens Token[]
+
   avatar String?
   bio    String?
+
+  isVerifed Boolean @default(false) @map("is_verifed")
+
+  isEmailVerifed Boolean @default(false) @map("is_email_verifed")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
   @@map("users")
+}
+
+model Token {
+  id String @id @default(uuid())
+
+  token     String    @unique
+  type      TokenType
+  expiresIn DateTime  @map("expires_in")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userId String? @map("user_id")
+
+  @@map("tokens")
+}
+
+enum TokenType {
+  EMAIL_VERIFY
+
+  @@map("token_types")
 }
